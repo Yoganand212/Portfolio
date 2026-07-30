@@ -19,7 +19,7 @@ export default function Experience() {
       </p>
 
       {/* Vintage poster grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8">
         {resumeData.experience.map((exp, i) => (
           <button
             key={exp.company}
@@ -40,7 +40,7 @@ export default function Experience() {
             >
               {/* Inner poster */}
               <div
-                className="relative p-6 md:p-8 h-[320px] flex flex-col justify-between"
+                className="relative p-5 md:p-8 min-h-[260px] md:min-h-[320px] h-auto flex flex-col justify-between"
                 style={{
                   background: "var(--color-paper-2)",
                   borderRadius: "calc(var(--radius-md) - 2px)",

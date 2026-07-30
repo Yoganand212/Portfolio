@@ -134,7 +134,7 @@ export default function RecordPlayer() {
 
       {/* Turntable Base */}
       <div
-        className="relative w-full max-w-[600px] aspect-[4/3] rounded-xl shadow-2xl p-4 md:p-8 flex items-center justify-center"
+        className="relative w-full max-w-[400px] md:max-w-[600px] aspect-[4/3] rounded-xl shadow-2xl p-3 md:p-8 flex items-center justify-center"
         style={{
           background: "var(--color-paper-2)",
           border: "1px solid var(--color-accent)",
@@ -147,7 +147,7 @@ export default function RecordPlayer() {
           role="button"
           tabIndex={0}
           aria-label={isPlaying ? "Pause the record" : "Play the record"}
-          className="relative w-[240px] h-[240px] md:w-[360px] md:h-[360px] rounded-full flex items-center justify-center cursor-pointer shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+          className="relative w-[180px] h-[180px] md:w-[360px] md:h-[360px] rounded-full flex items-center justify-center cursor-pointer shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
           onClick={togglePlay}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
@@ -177,7 +177,7 @@ export default function RecordPlayer() {
 
           {/* Center Label */}
           <div
-            className="relative w-[80px] h-[80px] md:w-[120px] md:h-[120px] rounded-full flex items-center justify-center text-center shadow-inner"
+            className="relative w-[60px] h-[60px] md:w-[120px] md:h-[120px] rounded-full flex items-center justify-center text-center shadow-inner"
             style={{ background: currentMood.accent }}
           >
             {/* Retro label design */}
@@ -215,7 +215,7 @@ export default function RecordPlayer() {
           aria-valuemax={30}
           aria-valuenow={armAngle}
           tabIndex={0}
-          className="absolute top-10 right-10 md:top-16 md:right-16 w-[120px] h-[200px] md:w-[160px] md:h-[260px] cursor-grab active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 rounded"
+          className="absolute top-6 right-6 md:top-16 md:right-16 w-[90px] h-[150px] md:w-[160px] md:h-[260px] cursor-grab active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 rounded"
           style={{
             transformOrigin: "top right",
             transform: `rotate(${armAngle}deg)`,
@@ -313,12 +313,12 @@ export default function RecordPlayer() {
       </div>
 
       {/* Vinyl Collection */}
-      <div className="mt-12 w-full max-w-[600px]">
+      <div className="mt-8 md:mt-12 w-full max-w-[600px]">
         <h3 className="font-outlier text-sm uppercase tracking-widest text-muted mb-6 text-center">
           What&apos;s your vibe today?
         </h3>
 
-        <div className="flex flex-wrap justify-center gap-6">
+        <div className="flex flex-wrap justify-center gap-3 md:gap-6">
           {moods.map((mood) => (
             <button
               key={mood.name}

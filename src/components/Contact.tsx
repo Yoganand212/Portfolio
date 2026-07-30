@@ -22,7 +22,7 @@ export default function Contact() {
         Before you leave into the rain, drop a card or sign the guest book.
       </p>
 
-      <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 items-start">
+      <div className="flex flex-col lg:flex-row gap-8 lg:gap-24 items-start">
         
         {/* Left: Business Cards */}
         <div className="flex-1 w-full max-w-md">

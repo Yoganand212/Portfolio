@@ -106,8 +106,8 @@ export default function Landing({ onEnter }: { onEnter: () => void }) {
 
       {/* Main Content */}
       <div
-        className="relative z-10 flex flex-col items-center text-center"
-        style={{ marginTop: "-8vh" }}
+        className="relative z-10 flex flex-col items-center text-center px-4"
+        style={{ marginTop: "-4vh" }}
       >
         {/* Intro */}
         <p className="font-display text-muted text-lg md:text-xl italic mb-2 tracking-wide" style={{ fontWeight: 300 }}>
@@ -152,26 +152,8 @@ export default function Landing({ onEnter }: { onEnter: () => void }) {
         </h2>
       </div>
 
-      {/* Piano Silhouette */}
-      <div
-        className="absolute bottom-20 z-0 w-56 md:w-80 opacity-50"
-        aria-hidden="true"
-      >
-        <svg
-          viewBox="0 0 100 60"
-          fill="var(--color-paper-2)"
-          className="w-full h-full"
-          style={{ filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.4))" }}
-        >
-          <path d="M10 50 L10 20 C20 15, 60 10, 80 10 C90 10, 95 20, 95 30 C95 40, 80 50, 70 50 Z" />
-          <path d="M10 50 L15 60 L18 60 L13 50 Z" />
-          <path d="M40 50 L45 60 L48 60 L43 50 Z" />
-          <path d="M70 50 L75 60 L78 60 L73 50 Z" />
-        </svg>
-      </div>
-
       {/* Enter prompt */}
-      <div className="absolute bottom-10 z-20 flex flex-col items-center">
+      <div className="absolute bottom-8 md:bottom-10 z-20 flex flex-col items-center">
         <button
           onClick={handleEnter}
           className="group flex flex-col items-center gap-2 rounded-lg p-3"

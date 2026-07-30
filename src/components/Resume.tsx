@@ -22,10 +22,10 @@ export default function Resume() {
       </p>
 
       {/* Two-column: About Me (left) + Flip Card (right) */}
-      <div className="flex flex-col lg:flex-row gap-10 lg:gap-14 items-stretch">
+      <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 items-stretch">
         {/* ── LEFT: About Me ────────────────────────────────── */}
         <div
-          className="flex-1 rounded-xl p-8 md:p-10 flex flex-col"
+          className="flex-1 rounded-xl p-6 md:p-10 flex flex-col"
           style={{
             background: "var(--color-paper-2)",
             border: "1px solid var(--color-rule)",
@@ -110,7 +110,7 @@ export default function Resume() {
         {/* ── RIGHT: 3D Flip Card ──────────────────────────── */}
         <div className="flex-1 flex items-center justify-center">
           <div
-            className="relative w-full max-w-[340px] aspect-[3/4]"
+            className="relative w-full max-w-[280px] md:max-w-[340px] aspect-[3/4]"
             style={{ perspective: "1200px" }}
           >
             <div

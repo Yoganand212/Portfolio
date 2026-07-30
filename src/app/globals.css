@@ -308,3 +308,44 @@ body::before {
   border-color: var(--color-accent);
   color: var(--color-accent-2);
 }
+
+/* ── Mobile responsiveness ─────────────────────────────────── */
+
+@media (max-width: 767px) {
+  /* Tighter section spacing on mobile */
+  .section {
+    padding-block: var(--space-xl);
+    padding-inline: clamp(var(--space-sm), 5vw, var(--space-lg));
+  }
+
+  /* Smaller headings on mobile */
+  h1 { font-size: clamp(1.75rem, 8vw, 3rem); }
+  h2 { font-size: var(--text-2xl); }
+  h3 { font-size: var(--text-xl); }
+  h4 { font-size: var(--text-lg); }
+
+  /* Reduce bottom margin on section descriptions */
+  .section-inner > p.text-muted {
+    margin-bottom: var(--space-lg);
+  }
+
+  /* Make brass rules thinner spacing */
+  .brass-rule {
+    margin-block: var(--space-xl);
+  }
+
+  /* Scrollbar hidden on mobile (use native) */
+  ::-webkit-scrollbar {
+    width: 3px;
+  }
+}
+
+/* Small phones */
+@media (max-width: 374px) {
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: var(--text-xl); }
+
+  .section {
+    padding-inline: var(--space-sm);
+  }
+}

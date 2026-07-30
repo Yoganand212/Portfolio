@@ -96,7 +96,7 @@ export default function Skills() {
             }
             aria-expanded={selectedInstrument === i}
             aria-label={`${skill.instrument} — ${skill.category}`}
-            className="group relative flex flex-col items-center gap-3 p-6 rounded-lg transition-all"
+            className="group relative flex flex-col items-center gap-2 md:gap-3 p-4 md:p-6 rounded-lg transition-all"
             style={{
               background: selectedInstrument === i ? "var(--color-paper-3)" : "var(--color-paper-2)",
               border: `1px solid ${selectedInstrument === i ? "var(--color-accent)" : "var(--color-rule)"}`,
