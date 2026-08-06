@@ -25,13 +25,21 @@ export default function Landing({ onEnter }: { onEnter: () => void }) {
     return () => clearInterval(interval);
   }, []);
 
-  // Track mouse
+  // Track mouse (throttled for performance)
   useEffect(() => {
+    let rafId: number | null = null;
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        setMousePos({ x: e.clientX, y: e.clientY });
+        rafId = null;
+      });
     };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
   }, []);
 
   // Compute per-letter styles based on cursor proximity

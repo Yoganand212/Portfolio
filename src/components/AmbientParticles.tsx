@@ -6,13 +6,10 @@ interface Particle {
   x: number;
   y: number;
   radius: number;
-  baseOpacity: number;
   opacity: number;
   vy: number;
-  vx: number;
-  phase: number;        // for sinusoidal sway
+  phase: number;
   phaseSpeed: number;
-  glowRadius: number;
 }
 
 export default function AmbientParticles() {
@@ -22,7 +19,7 @@ export default function AmbientParticles() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
     const prefersReducedMotion = window.matchMedia(
@@ -33,102 +30,86 @@ export default function AmbientParticles() {
 
     let animId: number;
     let particles: Particle[] = [];
+    let lastTime = 0;
+    const FRAME_INTERVAL = 1000 / 30; // Cap at 30fps
 
     const createParticle = (w: number, h: number, randomY = true): Particle => ({
       x: Math.random() * w,
       y: randomY ? Math.random() * h : h + Math.random() * 100,
-      radius: Math.random() * 2.5 + 0.8,
-      baseOpacity: Math.random() * 0.30 + 0.10,
-      opacity: 0,
-      vy: -(Math.random() * 0.35 + 0.08),
-      vx: 0,
+      radius: Math.random() * 2 + 0.8,
+      opacity: Math.random() * 0.25 + 0.08,
+      vy: -(Math.random() * 0.25 + 0.06),
       phase: Math.random() * Math.PI * 2,
-      phaseSpeed: Math.random() * 0.008 + 0.003,
-      glowRadius: Math.random() * 10 + 5,
+      phaseSpeed: Math.random() * 0.006 + 0.002,
     });
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = document.documentElement.scrollHeight * dpr;
-      canvas.style.width = "100%";
-      canvas.style.height = `${document.documentElement.scrollHeight}px`;
-      ctx.scale(dpr, dpr);
-
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       const w = window.innerWidth;
       const h = document.documentElement.scrollHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width = "100%";
+      canvas.style.height = `${h}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      // ~1 particle per 12000px² of area, minimum 30, max 120
-      const count = Math.max(30, Math.min(120, Math.floor((w * h) / 12000)));
+      // Fewer particles — ~1 per 25000px², min 15, max 50
+      const count = Math.max(15, Math.min(50, Math.floor((w * h) / 25000)));
       particles = Array.from({ length: count }, () => createParticle(w, h));
     };
 
     window.addEventListener("resize", resize);
     resize();
 
-    // Warm amber RGB values (approximating oklch(62% 0.120 45))
+    // Warm amber color
     const r = 214, g = 179, b = 127;
 
-    const render = () => {
+    const render = (timestamp: number) => {
+      animId = requestAnimationFrame(render);
+
+      // Throttle to 30fps
+      if (timestamp - lastTime < FRAME_INTERVAL) return;
+      lastTime = timestamp;
+
       const w = window.innerWidth;
       const h = document.documentElement.scrollHeight;
 
       ctx.clearRect(0, 0, w, h);
 
       for (const p of particles) {
-        // Horizontal sway
         p.phase += p.phaseSpeed;
-        p.vx = Math.sin(p.phase) * 0.15;
-
-        p.x += p.vx;
+        p.x += Math.sin(p.phase) * 0.12;
         p.y += p.vy;
-
-        // Fade in from bottom, fade out near top
-        const fadeInZone = h * 0.95;
-        const fadeOutZone = h * 0.02;
-        if (p.y > fadeInZone) {
-          p.opacity = p.baseOpacity * ((h - p.y) / (h - fadeInZone));
-        } else if (p.y < fadeOutZone) {
-          p.opacity = p.baseOpacity * (p.y / fadeOutZone);
-        } else {
-          p.opacity = p.baseOpacity;
-        }
 
         // Respawn if off screen
         if (p.y < -20) {
           Object.assign(p, createParticle(w, h, false));
         }
-        // Wrap horizontally
         if (p.x < -10) p.x = w + 10;
         if (p.x > w + 10) p.x = -10;
 
-        // Draw glow
-        const gradient = ctx.createRadialGradient(
-          p.x, p.y, 0,
-          p.x, p.y, p.glowRadius
-        );
-        gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${p.opacity * 0.6})`);
-        gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
-        ctx.fillStyle = gradient;
+        // Simple glow — single filled circle (no expensive radialGradient)
+        ctx.globalAlpha = p.opacity * 0.35;
+        ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.glowRadius, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, p.radius * 4, 0, Math.PI * 2);
         ctx.fill();
 
-        // Draw core
+        // Core dot
+        ctx.globalAlpha = p.opacity;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${p.opacity})`;
         ctx.fill();
       }
 
-      animId = requestAnimationFrame(render);
+      ctx.globalAlpha = 1;
     };
 
-    render();
+    animId = requestAnimationFrame(render);
 
-    // Re-measure on scroll-height changes (e.g. sections revealing)
+    // Re-measure on scroll-height changes
     const ro = new ResizeObserver(() => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       const newH = document.documentElement.scrollHeight;
       if (Math.abs(canvas.height / dpr - newH) > 100) {
         canvas.height = newH * dpr;
@@ -155,6 +136,7 @@ export default function AmbientParticles() {
         width: "100%",
         pointerEvents: "none",
         zIndex: 1,
+        willChange: "transform",
       }}
     />
   );

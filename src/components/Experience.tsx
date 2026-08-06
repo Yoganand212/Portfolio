@@ -71,14 +71,25 @@ export default function Experience() {
                 {/* Headliner — company */}
                 <div className="relative mt-4 flex-1">
                   <h3
-                    className="text-2xl md:text-3xl font-display leading-tight mb-2"
+                    className="font-display leading-tight mb-2"
                     style={{
                       color: "var(--color-ink)",
                       fontStyle: "normal",
                       fontWeight: 700,
+                      fontSize: exp.company.length > 25 ? "clamp(1.15rem, 2.5vw, 1.6rem)" : undefined,
                     }}
                   >
-                    {exp.company}
+                    {exp.company.length > 25 ? (
+                      <>
+                        {exp.company.replace(/ \(/, "\n(").split("\n").map((part, idx) => (
+                          <span key={idx} className={idx === 0 ? "block text-lg md:text-2xl" : "block text-sm md:text-base text-ink-2 font-normal mt-1"}>
+                            {part}
+                          </span>
+                        ))}
+                      </>
+                    ) : (
+                      <span className="text-2xl md:text-3xl">{exp.company}</span>
+                    )}
                   </h3>
 
                   {/* Role */}

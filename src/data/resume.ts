@@ -167,10 +167,10 @@ export const resumeData = {
       icon: "📄",
     },
     {
-      title: "97% Accuracy — Circuit Guard",
+      title: "100+ Problems on LeetCode",
       description:
-        "Achieved >97% classification accuracy on PCB defect detection using EfficientNet-B4.",
-      icon: "🎯",
+        "Solved 100+ problems on LeetCode, strengthening problem-solving skills across data structures, algorithms, and dynamic programming.",
+      icon: "💻",
     },
     {
       title: "BHEL Project Completion",
