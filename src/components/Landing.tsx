@@ -17,6 +17,31 @@ export default function Landing({ onEnter }: { onEnter: () => void }) {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const [roleIndex, setRoleIndex] = useState(0);
   const [roleVisible, setRoleVisible] = useState(true);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [wavePhase, setWavePhase] = useState(0);
+
+  // Detect touch device
+  useEffect(() => {
+    const isTouch = window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
+    setIsTouchDevice(isTouch);
+  }, []);
+
+  // Wave animation for mobile — continuous ripple through letters
+  useEffect(() => {
+    if (!isTouchDevice) return;
+
+    let animId: number;
+    let phase = 0;
+
+    const animate = () => {
+      phase += 0.04; // speed of the wave
+      setWavePhase(phase);
+      animId = requestAnimationFrame(animate);
+    };
+
+    animId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animId);
+  }, [isTouchDevice]);
 
   // Cycle roles with fade animation
   useEffect(() => {
@@ -30,8 +55,10 @@ export default function Landing({ onEnter }: { onEnter: () => void }) {
     return () => clearInterval(interval);
   }, []);
 
-  // Track mouse (throttled for performance)
+  // Track mouse (throttled — desktop only)
   useEffect(() => {
+    if (isTouchDevice) return;
+
     let rafId: number | null = null;
     const handleMouseMove = (e: MouseEvent) => {
       if (rafId !== null) return;
@@ -45,10 +72,29 @@ export default function Landing({ onEnter }: { onEnter: () => void }) {
       window.removeEventListener("mousemove", handleMouseMove);
       if (rafId !== null) cancelAnimationFrame(rafId);
     };
-  }, []);
+  }, [isTouchDevice]);
 
-  // Compute per-letter styles based on cursor proximity
-  const getLetterStyle = (index: number): React.CSSProperties => {
+  // Mobile wave: each letter gets a sine-based expansion that ripples across
+  const getMobileLetterStyle = (index: number): React.CSSProperties => {
+    // Each letter is offset in the wave by its index
+    const letterPhase = wavePhase - index * 0.6;
+    const wave = Math.max(0, Math.sin(letterPhase)); // 0 to 1, only positive half
+    const eased = wave * wave; // quadratic for smoother feel
+
+    const spacingEm = 0.02 + eased * 0.18; // subtler than desktop hover
+    const weight = 700 + eased * 150;
+    const lift = eased * -2; // slight float up at peak
+
+    return {
+      letterSpacing: `${spacingEm}em`,
+      fontWeight: Math.round(weight),
+      transform: `translateY(${lift}px)`,
+      transition: "transform 0.1s ease-out",
+    };
+  };
+
+  // Desktop: per-letter styles based on cursor proximity
+  const getDesktopLetterStyle = (index: number): React.CSSProperties => {
     if (!titleRef.current) return {};
 
     const spans = titleRef.current.querySelectorAll<HTMLSpanElement>("[data-letter]");
@@ -84,6 +130,10 @@ export default function Landing({ onEnter }: { onEnter: () => void }) {
     };
   };
 
+  const getLetterStyle = (index: number): React.CSSProperties => {
+    return isTouchDevice ? getMobileLetterStyle(index) : getDesktopLetterStyle(index);
+  };
+
   const handleEnter = () => {
     onEnter();
     const target = document.getElementById("record-player");
@@ -117,15 +167,17 @@ export default function Landing({ onEnter }: { onEnter: () => void }) {
         }}
       />
 
-      {/* Torch spotlight — follows cursor (bright & warm) */}
-      <div
-        className="absolute inset-0 pointer-events-none z-[1]"
-        aria-hidden="true"
-        style={{
-          background: `radial-gradient(circle 500px at ${mousePos.x}px ${mousePos.y}px, oklch(45% 0.16 55 / 0.28), transparent 75%)`,
-          transition: "background 0.15s ease-out",
-        }}
-      />
+      {/* Torch spotlight — follows cursor (desktop only) */}
+      {!isTouchDevice && (
+        <div
+          className="absolute inset-0 pointer-events-none z-[1]"
+          aria-hidden="true"
+          style={{
+            background: `radial-gradient(circle 500px at ${mousePos.x}px ${mousePos.y}px, oklch(45% 0.16 55 / 0.28), transparent 75%)`,
+            transition: "background 0.15s ease-out",
+          }}
+        />
+      )}
 
       {/* Main Content */}
       <div
@@ -144,7 +196,7 @@ export default function Landing({ onEnter }: { onEnter: () => void }) {
           Hi, I&apos;m
         </p>
 
-        {/* Neon Sign — with per-letter magnetic expansion */}
+        {/* Neon Sign — with per-letter magnetic expansion (desktop) or wave (mobile) */}
         <h1
           ref={titleRef}
           className="font-outlier mb-5 flex"
