@@ -74,7 +74,7 @@ export const resumeData = {
         "Built full-stack web app with real-time defect visualization",
         "OpenCV-based image subtraction for precise defect localization",
       ],
-      github: "https://github.com/Yoganand212",
+      github: "https://github.com/Yoganand212/PCB-Defect-Detection-and-Classifincation-",
       demo: null,
     },
     {
@@ -88,7 +88,7 @@ export const resumeData = {
         "FastAPI OCR pipeline with image preprocessing",
         "Interactive Next.js dashboard with PostgreSQL integration",
       ],
-      github: "https://github.com/Yoganand212",
+      github: "https://github.com/Yoganand212/Invoice-OCR-Generator",
       demo: null,
     },
     {
