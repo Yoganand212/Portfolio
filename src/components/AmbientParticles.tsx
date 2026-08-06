@@ -36,8 +36,8 @@ export default function AmbientParticles() {
     const createParticle = (w: number, h: number, randomY = true): Particle => ({
       x: Math.random() * w,
       y: randomY ? Math.random() * h : h + Math.random() * 100,
-      radius: Math.random() * 2 + 0.8,
-      opacity: Math.random() * 0.25 + 0.08,
+      radius: Math.random() * 2.5 + 0.6,
+      opacity: Math.random() * 0.28 + 0.10,
       vy: -(Math.random() * 0.25 + 0.06),
       phase: Math.random() * Math.PI * 2,
       phaseSpeed: Math.random() * 0.006 + 0.002,
@@ -53,8 +53,8 @@ export default function AmbientParticles() {
       canvas.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      // Fewer particles — ~1 per 25000px², min 15, max 50
-      const count = Math.max(15, Math.min(50, Math.floor((w * h) / 25000)));
+      // Bubbly lights — ~1 per 18000px², min 20, max 75
+      const count = Math.max(20, Math.min(75, Math.floor((w * h) / 18000)));
       particles = Array.from({ length: count }, () => createParticle(w, h));
     };
 

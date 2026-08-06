@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 
 export default function Navigation() {
   const [activeSection, setActiveSection] = useState("entrance");
+  const [isVisible, setIsVisible] = useState(false);
 
   const sections = [
     { id: "entrance", label: "Home" },
@@ -13,12 +14,21 @@ export default function Navigation() {
     { id: "exit-lobby", label: "Contact" },
   ];
 
+  // Show nav only after scrolling past the landing
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsVisible(window.scrollY > window.innerHeight * 0.7);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   // Track which section is in the viewport
   useEffect(() => {
     const sectionIds = sections.map((s) => s.id);
     const observer = new IntersectionObserver(
       (entries) => {
-        // Find the entry with the largest intersection ratio
         const visible = entries
           .filter((e) => e.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
@@ -47,17 +57,22 @@ export default function Navigation() {
 
   return (
     <div
-      className="fixed top-5 left-1/2 z-[100]"
-      style={{ transform: "translateX(-50%)" }}
+      className="fixed top-4 left-1/2 z-[100]"
+      style={{
+        transform: `translateX(-50%) translateY(${isVisible ? "0" : "-60px"})`,
+        opacity: isVisible ? 1 : 0,
+        transition: "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease",
+        pointerEvents: isVisible ? "auto" : "none",
+      }}
     >
       <nav
-        className="flex items-center gap-0.5 px-2 py-1.5 md:px-3 md:py-2 rounded-full"
+        className="flex items-center gap-0.5 px-2 py-1 md:px-3 md:py-1.5 rounded-full"
         style={{
-          background: "oklch(12% 0.02 45 / 0.9)",
-          border: "1px solid oklch(40% 0.08 55 / 0.25)",
+          background: "oklch(10% 0.015 45 / 0.65)",
+          border: "1px solid oklch(35% 0.06 55 / 0.15)",
           boxShadow:
-            "0 8px 32px rgba(0,0,0,0.6), inset 0 1px 0 oklch(40% 0.08 55 / 0.08)",
-          backdropFilter: "blur(16px)",
+            "0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 oklch(35% 0.06 55 / 0.06)",
+          backdropFilter: "blur(20px)",
         }}
       >
         {sections.map((section) => {
@@ -66,7 +81,7 @@ export default function Navigation() {
             <button
               key={section.id}
               onClick={() => scrollTo(section.id)}
-              className="relative px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm tracking-wide transition-all duration-300 focus-visible:outline-none focus-visible:ring-2"
+              className="relative px-3 py-1.5 md:px-4 md:py-1.5 rounded-full text-xs md:text-sm tracking-wide transition-all duration-300 focus-visible:outline-none focus-visible:ring-2"
               style={{
                 fontFamily: "var(--font-display)",
                 fontWeight: isActive ? 500 : 400,
@@ -74,12 +89,12 @@ export default function Navigation() {
                 letterSpacing: "0.04em",
                 color: isActive
                   ? "var(--color-ink)"
-                  : "oklch(55% 0.02 55)",
+                  : "oklch(50% 0.02 55 / 0.7)",
                 background: isActive
-                  ? "oklch(20% 0.04 55 / 0.8)"
+                  ? "oklch(18% 0.035 55 / 0.6)"
                   : "transparent",
                 boxShadow: isActive
-                  ? "0 0 12px oklch(50% 0.12 55 / 0.2), inset 0 0 8px oklch(40% 0.08 55 / 0.1)"
+                  ? "0 0 8px oklch(50% 0.10 55 / 0.12)"
                   : "none",
                 // @ts-expect-error CSS custom property
                 "--tw-ring-color": "var(--color-accent)",
@@ -89,11 +104,11 @@ export default function Navigation() {
               {/* Warm underline glow for active item */}
               {isActive && (
                 <span
-                  className="absolute bottom-0.5 left-1/2 -translate-x-1/2 h-[2px] rounded-full"
+                  className="absolute bottom-0.5 left-1/2 -translate-x-1/2 h-[1.5px] rounded-full"
                   style={{
-                    width: "60%",
+                    width: "50%",
                     background: "var(--color-accent-2)",
-                    boxShadow: "0 0 6px var(--color-accent-2)",
+                    boxShadow: "0 0 4px var(--color-accent-2)",
                   }}
                 />
               )}

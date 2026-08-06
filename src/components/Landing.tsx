@@ -117,12 +117,12 @@ export default function Landing({ onEnter }: { onEnter: () => void }) {
         }}
       />
 
-      {/* Torch spotlight — follows cursor (brighter) */}
+      {/* Torch spotlight — follows cursor (bright & warm) */}
       <div
         className="absolute inset-0 pointer-events-none z-[1]"
         aria-hidden="true"
         style={{
-          background: `radial-gradient(circle 450px at ${mousePos.x}px ${mousePos.y}px, oklch(40% 0.14 55 / 0.18), transparent 80%)`,
+          background: `radial-gradient(circle 500px at ${mousePos.x}px ${mousePos.y}px, oklch(45% 0.16 55 / 0.28), transparent 75%)`,
           transition: "background 0.15s ease-out",
         }}
       />
