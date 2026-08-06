@@ -71,24 +71,30 @@ export default function Experience() {
                 {/* Headliner — company */}
                 <div className="relative mt-4 flex-1">
                   <h3
-                    className="font-display leading-tight mb-2"
+                    className="font-display leading-tight mb-2 text-xl md:text-2xl tracking-tight"
                     style={{
                       color: "var(--color-ink)",
                       fontStyle: "normal",
                       fontWeight: 700,
-                      fontSize: exp.company.length > 25 ? "clamp(1.15rem, 2.5vw, 1.6rem)" : undefined,
+                      wordBreak: "keep-all",
+                      overflowWrap: "break-word",
                     }}
                   >
-                    {exp.company.length > 25 ? (
+                    {exp.company === "Bharat Heavy Electricals Limited (BHEL)" ? (
                       <>
-                        {exp.company.replace(/ \(/, "\n(").split("\n").map((part, idx) => (
-                          <span key={idx} className={idx === 0 ? "block text-lg md:text-2xl" : "block text-sm md:text-base text-ink-2 font-normal mt-1"}>
-                            {part}
-                          </span>
-                        ))}
+                        <span className="block">Bharat Heavy Electricals</span>
+                        <span className="block text-base md:text-lg text-ink-2 font-normal mt-1">Limited (BHEL)</span>
+                      </>
+                    ) : exp.company === "Infosys Springboard" ? (
+                      <>
+                        <span className="block">Infosys</span>
+                        <span className="block">Springboard</span>
                       </>
                     ) : (
-                      <span className="text-2xl md:text-3xl">{exp.company}</span>
+                      <>
+                        <span className="block">Loginware Softtec</span>
+                        <span className="block text-base md:text-lg text-ink-2 font-normal mt-1">Pvt. Ltd.</span>
+                      </>
                     )}
                   </h3>
 
