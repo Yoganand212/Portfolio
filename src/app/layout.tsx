@@ -13,6 +13,9 @@ export const metadata: Metadata = {
     "full-stack developer",
   ],
   authors: [{ name: "Yoganand S" }],
+  icons: {
+    icon: "/icon.png",
+  },
   openGraph: {
     title: "Yoganand S — The Jazz Lounge",
     description:
@@ -50,6 +53,7 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Geist:wght@300;350;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap"
           rel="stylesheet"
         />
+        <link rel="icon" href="/icon.png" />
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, viewport-fit=cover"
