@@ -16,11 +16,16 @@ export default function Landing({ onEnter }: { onEnter: () => void }) {
   const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 });
   const titleRef = useRef<HTMLHeadingElement>(null);
   const [roleIndex, setRoleIndex] = useState(0);
+  const [roleVisible, setRoleVisible] = useState(true);
 
-  // Cycle roles
+  // Cycle roles with fade animation
   useEffect(() => {
     const interval = setInterval(() => {
-      setRoleIndex((prev) => (prev + 1) % ROLES.length);
+      setRoleVisible(false);
+      setTimeout(() => {
+        setRoleIndex((prev) => (prev + 1) % ROLES.length);
+        setRoleVisible(true);
+      }, 400);
     }, 3000);
     return () => clearInterval(interval);
   }, []);
@@ -57,7 +62,7 @@ export default function Landing({ onEnter }: { onEnter: () => void }) {
     const dy = mousePos.y - letterCenterY;
     const distance = Math.sqrt(dx * dx + dy * dy);
 
-    const maxRange = 180; // px range of influence
+    const maxRange = 180;
     if (distance > maxRange) {
       return {
         letterSpacing: "0.02em",
@@ -66,12 +71,11 @@ export default function Landing({ onEnter }: { onEnter: () => void }) {
       };
     }
 
-    // Closer = more expansion. Normalize 0 (far) to 1 (touching)
     const proximity = 1 - distance / maxRange;
-    const eased = proximity * proximity; // quadratic ease for smoother feel
+    const eased = proximity * proximity;
 
-    const spacingEm = 0.02 + eased * 0.35; // 0.02em → 0.37em
-    const weight = 700 + eased * 200; // 700 → 900
+    const spacingEm = 0.02 + eased * 0.35;
+    const weight = 700 + eased * 200;
 
     return {
       letterSpacing: `${spacingEm}em`,
@@ -90,24 +94,35 @@ export default function Landing({ onEnter }: { onEnter: () => void }) {
 
   return (
     <div className="relative w-full min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden bg-transparent">
-      {/* Warm radial blooms — atmospheric backdrop */}
+      {/* Atmospheric backdrop — richer, warmer blooms */}
       <div
         className="absolute inset-0 pointer-events-none z-0"
         aria-hidden="true"
         style={{
           background: `
-            radial-gradient(ellipse 60% 50% at 20% 40%, oklch(24% 0.070 45 / 0.55), transparent),
-            radial-gradient(ellipse 50% 60% at 80% 60%, oklch(20% 0.050 350 / 0.4), transparent)
+            radial-gradient(ellipse 70% 55% at 25% 35%, oklch(28% 0.090 45 / 0.7), transparent),
+            radial-gradient(ellipse 55% 65% at 75% 65%, oklch(24% 0.070 350 / 0.5), transparent),
+            radial-gradient(ellipse 40% 40% at 50% 50%, oklch(22% 0.060 55 / 0.4), transparent)
           `,
         }}
       />
 
-      {/* Torch spotlight — follows cursor */}
+      {/* Slow animated ambient glow */}
+      <div
+        className="absolute inset-0 pointer-events-none z-0"
+        aria-hidden="true"
+        style={{
+          background: "radial-gradient(ellipse 80% 60% at 50% 45%, oklch(30% 0.10 50 / 0.25), transparent 70%)",
+          animation: "ambient-breathe 6s ease-in-out infinite",
+        }}
+      />
+
+      {/* Torch spotlight — follows cursor (brighter) */}
       <div
         className="absolute inset-0 pointer-events-none z-[1]"
         aria-hidden="true"
         style={{
-          background: `radial-gradient(circle 500px at ${mousePos.x}px ${mousePos.y}px, oklch(35% 0.12 55 / 0.12), transparent 80%)`,
+          background: `radial-gradient(circle 450px at ${mousePos.x}px ${mousePos.y}px, oklch(40% 0.14 55 / 0.18), transparent 80%)`,
           transition: "background 0.15s ease-out",
         }}
       />
@@ -118,19 +133,26 @@ export default function Landing({ onEnter }: { onEnter: () => void }) {
         style={{ marginTop: "-4vh" }}
       >
         {/* Intro */}
-        <p className="font-display text-muted text-lg md:text-xl italic mb-2 tracking-wide" style={{ fontWeight: 300 }}>
+        <p
+          className="font-display text-lg md:text-xl italic mb-3 tracking-wide"
+          style={{
+            fontWeight: 300,
+            color: "var(--color-ink-2)",
+            opacity: 0.8,
+          }}
+        >
           Hi, I&apos;m
         </p>
 
         {/* Neon Sign — with per-letter magnetic expansion */}
         <h1
           ref={titleRef}
-          className="font-outlier mb-4 flex"
+          className="font-outlier mb-5 flex"
           style={{
             color: "var(--color-ink)",
             fontSize: "var(--text-neon)",
             textShadow:
-              "0 0 5px var(--color-neon), 0 0 20px var(--color-neon), 0 0 40px var(--color-accent-2), 0 0 80px var(--color-accent-2)",
+              "0 0 8px var(--color-neon), 0 0 25px var(--color-neon), 0 0 50px var(--color-accent-2), 0 0 100px var(--color-accent-2), 0 0 150px oklch(60% 0.12 55 / 0.3)",
             animation: "flicker 4s infinite",
           }}
         >
@@ -146,15 +168,28 @@ export default function Landing({ onEnter }: { onEnter: () => void }) {
           ))}
         </h1>
 
-        {/* Subtitle */}
-        <h2
-          className="font-display text-2xl md:text-3xl transition-opacity duration-500"
+        {/* Decorative line */}
+        <div
+          className="mb-5"
           style={{
-            color: "var(--color-ink-2)",
-            fontWeight: 300,
-            fontStyle: "normal",
+            width: "60px",
+            height: "1px",
+            background: "linear-gradient(90deg, transparent, var(--color-accent), transparent)",
           }}
-          key={roleIndex} // forces re-render/animation if needed, but css transition on key works best with absolute pos, let's keep it simple
+        />
+
+        {/* Subtitle — with fade transition */}
+        <h2
+          className="font-display text-2xl md:text-3xl"
+          style={{
+            color: "var(--color-accent-2)",
+            fontWeight: 400,
+            fontStyle: "normal",
+            letterSpacing: "0.02em",
+            opacity: roleVisible ? 1 : 0,
+            transform: roleVisible ? "translateY(0)" : "translateY(6px)",
+            transition: "opacity 0.4s ease, transform 0.4s ease",
+          }}
         >
           {ROLES[roleIndex]}
         </h2>
@@ -171,7 +206,7 @@ export default function Landing({ onEnter }: { onEnter: () => void }) {
           <span
             className="font-display text-sm tracking-widest uppercase"
             style={{
-              color: "var(--color-muted)",
+              color: "var(--color-ink-2)",
               fontWeight: 300,
               animation: "pulse-opacity 3s ease-in-out infinite",
             }}
@@ -183,7 +218,7 @@ export default function Landing({ onEnter }: { onEnter: () => void }) {
             height="24"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="var(--color-muted)"
+            stroke="var(--color-ink-2)"
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"

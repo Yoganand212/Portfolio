@@ -173,7 +173,7 @@ body::before {
 }
 
 @keyframes pulse-opacity {
-  0%, 100% { opacity: 0.4; }
+  0%, 100% { opacity: 0.5; }
   50% { opacity: 1; }
 }
 
@@ -186,6 +186,11 @@ body::before {
     opacity: 1;
     transform: none;
   }
+}
+
+@keyframes ambient-breathe {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(1.05); }
 }
 
 /* ── Scrollbar styling ──────────────────────────────────────── */
