@@ -14,7 +14,12 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Yoganand S" }],
   icons: {
-    icon: "/icon.png",
+    icon: [
+      { url: "/icon.png", type: "image/png" },
+      { url: "/favicon.ico", type: "image/x-icon" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/icon.png",
   },
   openGraph: {
     title: "Yoganand S — The Jazz Lounge",

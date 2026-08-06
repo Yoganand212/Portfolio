@@ -18,30 +18,12 @@ export default function Landing({ onEnter }: { onEnter: () => void }) {
   const [roleIndex, setRoleIndex] = useState(0);
   const [roleVisible, setRoleVisible] = useState(true);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
-  const [wavePhase, setWavePhase] = useState(0);
 
   // Detect touch device
   useEffect(() => {
     const isTouch = window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
     setIsTouchDevice(isTouch);
   }, []);
-
-  // Wave animation for mobile — continuous ripple through letters
-  useEffect(() => {
-    if (!isTouchDevice) return;
-
-    let animId: number;
-    let phase = 0;
-
-    const animate = () => {
-      phase += 0.04; // speed of the wave
-      setWavePhase(phase);
-      animId = requestAnimationFrame(animate);
-    };
-
-    animId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animId);
-  }, [isTouchDevice]);
 
   // Cycle roles with fade animation
   useEffect(() => {
@@ -74,22 +56,12 @@ export default function Landing({ onEnter }: { onEnter: () => void }) {
     };
   }, [isTouchDevice]);
 
-  // Mobile wave: each letter gets a sine-based expansion that ripples across
+  // Mobile: hardware-accelerated CSS keyframe wave (0% JS CPU / 0 React re-renders)
   const getMobileLetterStyle = (index: number): React.CSSProperties => {
-    // Each letter is offset in the wave by its index
-    const letterPhase = wavePhase - index * 0.6;
-    const wave = Math.max(0, Math.sin(letterPhase)); // 0 to 1, only positive half
-    const eased = wave * wave; // quadratic for smoother feel
-
-    const spacingEm = 0.02 + eased * 0.18; // subtler than desktop hover
-    const weight = 700 + eased * 150;
-    const lift = eased * -2; // slight float up at peak
-
     return {
-      letterSpacing: `${spacingEm}em`,
-      fontWeight: Math.round(weight),
-      transform: `translateY(${lift}px)`,
-      transition: "transform 0.1s ease-out",
+      animation: "letter-wave 3.6s ease-in-out infinite",
+      animationDelay: `${index * 0.25}s`,
+      willChange: "transform, letter-spacing",
     };
   };
 
@@ -196,7 +168,7 @@ export default function Landing({ onEnter }: { onEnter: () => void }) {
           Hi, I&apos;m
         </p>
 
-        {/* Neon Sign — with per-letter magnetic expansion (desktop) or wave (mobile) */}
+        {/* Neon Sign — with per-letter magnetic expansion (desktop) or CSS keyframe wave (mobile) */}
         <h1
           ref={titleRef}
           className="font-outlier mb-5 flex"
